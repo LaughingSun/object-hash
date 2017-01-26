@@ -1,6 +1,8 @@
 'use strict';
 
-var crypto = require('crypto');
+const assert = require( 'assert' )
+    , crypto = require('crypto')
+    ;
 
 /**
  * Exported function
@@ -28,6 +30,8 @@ var crypto = require('crypto');
 exports = module.exports = objectHash;
 
 function objectHash(object, options){
+  assertf( undefined !== object, 'Object argument required.' );
+
   options = applyDefaults(object, options);
 
   return hash(object, options);
@@ -58,6 +62,8 @@ var hashes = crypto.getHashes ? crypto.getHashes().slice() : ['sha1', 'md5'];
 hashes.push('passthrough');
 var encodings = ['buffer', 'hex', 'binary', 'base64'];
 
+exports.applyDefaults = applyDefaults;
+  
 function applyDefaults(object, options){
   options = options || {};
   options.algorithm = options.algorithm || 'sha1';
@@ -72,10 +78,6 @@ function applyDefaults(object, options){
   options.unorderedArrays = options.unorderedArrays !== true ? false : true; // default to false
   options.unorderedSets = options.unorderedSets === false ? false : true; // default to false
   options.replacer = options.replacer || undefined;
-
-  if(typeof object === 'undefined') {
-    throw new Error('Object argument required.');
-  }
 
   // if there is a case-insensitive match in the hashes list, accept it
   // (i.e. SHA256 for sha256)
@@ -108,6 +110,8 @@ function isNativeFunction(f) {
   return exp.exec(Function.prototype.toString.call(f)) != null;
 }
 
+exports._objectHash = hash;
+  
 function hash(object, options) {
   var hashingStream;
   
